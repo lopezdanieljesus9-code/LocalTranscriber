@@ -33,3 +33,37 @@ jobs:
           path: |
             app/build/reports/tests/
             app/build/reports/jacoco/
+
+name: Build LocalTranscriber APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download source
+        uses: actions/checkout@v4
+
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug -PtargetAbi=arm64-v8a
+
+      - name: Save APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: LocalTranscriber-APK
+          path: app/build/outputs/apk/debug/*.apk
+         
